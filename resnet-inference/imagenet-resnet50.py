@@ -2,13 +2,11 @@ import os
 
 import numpy as np
 import torch
-import torchvision.models as models
 from PIL import Image
 from flask import Flask, request
 from torchvision import transforms
 from werkzeug.utils import secure_filename
 
-model_file = "./resnet50-19c8e357.pth"
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 UPLOAD_FOLDER = '/tmp'
 
@@ -49,22 +47,23 @@ def postprocess(output, label_file="./labels.txt"):
 
 
 def running(input):
-    net = models.resnet50().to(device)
-    net.load_state_dict(torch.load(model_file, map_location=device))
+    net = torch.hub.load('pytorch/vision:v0.6.0', 'resnet18', pretrained=True)
     net = net.to(device)
     net.eval()
     output = net(input)
     return output
 
+
 @app.route('/', methods=['POST'])
 def serving():
     file = request.files['file']
-    filename = secure_filename(file.filename)
-    file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+    filename = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(file.filename))
+    file.save(filename)
     input = preprocess(filename).to(device)
     output = running(input)
     result = postprocess(output)
     return result
+
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port="5000")
