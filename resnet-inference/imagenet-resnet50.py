@@ -64,8 +64,8 @@ def serving():
     return result
 
 @app.route('/', methods=['GET'])
-def serving():
-    return 'example: curl -XPOST http://127.0.0.1:5000 -F "file=@./resnet-inference/dog.jpg" <br/>' \
+def preview():
+    return 'example: curl -XPOST http://127.0.0.1:5000/predict -F "file=@./resnet-inference/dog.jpg" <br/>' \
            '{"Great Pyrenees":0.8846225142478943}'
 
 
