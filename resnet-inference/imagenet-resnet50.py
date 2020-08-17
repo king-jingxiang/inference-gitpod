@@ -36,7 +36,7 @@ def preprocess(filename):
     return input_batch
 
 
-def postprocess(output, label_file="./labels.txt"):
+def postprocess(output, label_file="./resnet-inference/labels.txt"):
     output = torch.nn.functional.softmax(output[0], dim=0).tolist()
     labels = __load_labels(label_file)
     top_k = np.array(output).argsort()[-1:][::-1]
@@ -53,8 +53,7 @@ def running(input):
     output = net(input)
     return output
 
-
-@app.route('/', methods=['POST'])
+@app.route('/predict', methods=['POST'])
 def serving():
     file = request.files['file']
     filename = os.path.join(app.config['UPLOAD_FOLDER'], secure_filename(file.filename))
@@ -63,6 +62,11 @@ def serving():
     output = running(input)
     result = postprocess(output)
     return result
+
+@app.route('/', methods=['GET'])
+def serving():
+    return 'example: curl -XPOST http://127.0.0.1:5000 -F "file=@./resnet-inference/dog.jpg" <br/>' \
+           '{"Great Pyrenees":0.8846225142478943}'
 
 
 if __name__ == '__main__':
