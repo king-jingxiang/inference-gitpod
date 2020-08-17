@@ -1,4 +1,4 @@
 {
-    "python.pythonPath": "~/anacodan3/bin/python3.7",
+    "python.pythonPath": "/home/gitpod/.pyenv/shims/python",
     "editor.autoSave": "on"
 }

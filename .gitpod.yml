@@ -8,4 +8,5 @@ ports:
 
 # This will make it so that on workspace start it will run a file called `app.py`
 tasks:
-  - command: python3 resnet-inference/imagenet-:.py
+  - init: pyenv shell 3.6.4
+  - command: cd resnet-inference && python imagenet-resnet50.py
